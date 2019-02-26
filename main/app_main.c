@@ -35,7 +35,8 @@ void app_main(void)
 
   i2c_init();
   tft_init();
-  ccs811_sensor_t* sensor = ccs811_init_sensor();
+  static ccs811_sensor_t* sensor ;
+  sensor= ccs811_init_sensor();
 
   double Temperature;
   double Humidity;
@@ -68,7 +69,7 @@ void app_main(void)
     if (ccs811_get_results (sensor, &tvoc, &eco2, 0, 0))
     {
       printf("CCS811 TVOC=%4d(ppb), eCO2=%4d(ppm)\n", tvoc, eco2);
-      if((tvoc<=999)&&(eco2<=9999))
+      if((tvoc<=999)&&(eco2<=8192))
       {
         sprintf(tvoc_c,"%-3d",tvoc);
         sprintf(eco2_c,"%-4d",eco2);
