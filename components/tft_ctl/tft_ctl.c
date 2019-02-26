@@ -277,8 +277,8 @@ static void disp_images()
 		_fg = TFT_CYAN;
 		TFT_print("ShiTong Technology", CENTER, CENTER);
 		Wait(3000);
-		TFT_jpg_image(0, 50, 0, SPIFFS_BASE_PATH"/images/t1.jpg", NULL, 0);
-		Wait(3000);
+		//TFT_jpg_image(0, 50, 0, SPIFFS_BASE_PATH"/images/t1.jpg", NULL, 0);
+		//Wait(3000);
 
 		/*TFT_jpg_image(CENTER, CENTER, 0, SPIFFS_BASE_PATH"/images/sun2.jpg", NULL, 0);
 		Wait(3000);
@@ -341,9 +341,10 @@ static void font_demo()
 			if (f == 0) font_line_space = 4;
 			end_time = clock() + GDEMO_TIME;
 			n = 0;
-			while ((clock() < end_time) && (Wait(0))) {
+			while ((clock() < end_time) && (Wait(0))) 
+			{
 				_fg = random_color();
-				TFT_print("孙浩Welcome to ESP32\nThis is user font.", 0, 8);
+				TFT_print("Welcome to ESP32\nThis is user font.", 0, 8);
 				n++;
 			}
 			if ((_width < 240) || (_height < 240)) TFT_setFont(DEF_SMALL_FONT, NULL);
@@ -841,8 +842,9 @@ static void poly_demo()
 
 
 
-//===============
-void tft_demo() {
+
+void tft_demo() 
+{
 
 	font_rotate = 0;
 	text_wrap = 0;
@@ -904,11 +906,11 @@ void tft_demo() {
 	Wait(4000);
 
 
-	/*while(1)
+	while(1)
 	{
 		
 		disp_images();
-	}*/
+	}
 
 	while (1) 
 	{
@@ -950,7 +952,7 @@ void tft_demo() {
 
 		font_demo();
 		//arc_demo();
-		//disp_images();
+		disp_images();
 
 		//_demo_pass++;
 	}
@@ -1067,28 +1069,57 @@ void tft_init()
     TFT_setGammaCurve(DEFAULT_GAMMA_CURVE);
 	TFT_setRotation(PORTRAIT);
 	TFT_setFont(DEFAULT_FONT, NULL);
-	TFT_resetclipwin();
+	TFT_resetclipwin();//清屏
 
+
+	TFT_setFont(COMIC24_FONT, NULL);
+	int tempy = TFT_getfontheight() + 4;
+	_fg = TFT_ORANGE;
+	TFT_print("AIRBOX2", CENTER, (dispWin.y2-dispWin.y1)/2 - tempy);
+
+	TFT_setFont(UBUNTU16_FONT, NULL);
+	_fg = TFT_CYAN;
+	TFT_print("ShiTong Technology", CENTER, LASTY+tempy);
+
+	tempy = TFT_getfontheight() + 4;
+	TFT_setFont(DEFAULT_FONT, NULL);
+	_fg = TFT_GREEN;
+	sprintf(tmp_buff, "Read speed: %5.2f MHz", (float)max_rdclock/1000000.0);
+	TFT_print(tmp_buff, CENTER, LASTY+tempy);
 
 
 	//disp_header("File system INIT");
     _fg = TFT_CYAN;
-	TFT_print("Initializing SPIFFS...", CENTER, CENTER);
+	TFT_print("Initializing SPIFFS...", CENTER, LASTY+TFT_getfontheight() + 80);
     // ==== Initialize the file system ====
     printf("\r\n\n");
 	vfs_spiffs_register();
-    if (!spiffs_is_mounted) {
-    	_fg = TFT_RED;
-    	TFT_print("SPIFFS not mounted !", CENTER, LASTY+TFT_getfontheight()+2);
+	Wait(-1000);
+    if (!spiffs_is_mounted) 
+	{
+		_fg = TFT_RED;
+    	TFT_print("SPIFFS not mounted !", CENTER,LASTY+ TFT_getfontheight() + 4);
     }
-    else {
-    	_fg = TFT_GREEN;
-    	TFT_print("SPIFFS Mounted.", CENTER, LASTY+TFT_getfontheight()+2);
+    else 
+	{
+		_fg = TFT_GREEN;
+    	TFT_print("SPIFFS Mounted！", CENTER,LASTY+ TFT_getfontheight() + 4);
     }
 	Wait(-2000);
 
 
-	tft_demo();
+	//显示主图底图
+	TFT_jpg_image(CENTER, CENTER, 0, SPIFFS_BASE_PATH"/images/b1.jpg", NULL, 0);
+	//font_transparent = 1; //无背景
+	//TFT_setFont(UBUNTU16_FONT, NULL);
+	//_fg = TFT_WHITE;
+	//TFT_print("Temperature", 5, 40);
+
+	//TFT_print("Humidity", 150, 40);
+
+
+
+	//tft_demo();
 }
 
 

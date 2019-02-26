@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "tftspi.h": "c"
+        "tftspi.h": "c",
+        "sht31.h": "c",
+        "esp8266_wrapper.h": "c"
     }
 }

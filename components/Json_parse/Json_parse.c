@@ -170,16 +170,17 @@ esp_err_t parse_objects_mqtt(char *json_data)
 void create_mqtt_json(creat_json *pCreat_json)
 {
 
+    double Temperature;
+    double Humidity;
     cJSON *root = cJSON_CreateObject();
     cJSON *next = cJSON_CreateObject();
 
     cJSON_AddItemToObject(root, "method", cJSON_CreateString("thing.event.property.post"));
     cJSON_AddItemToObject(root, "params", next);
 
-    if (sht31_readTempHum()) 
+    if (sht31_readTempHum(&Temperature,&Humidity)) 
     {		
-        double Temperature = sht31_readTemperature();
-        double Humidity = sht31_readHumidity();
+
 
         cJSON_AddItemToObject(next, "Temperature", cJSON_CreateNumber(Temperature));
         cJSON_AddItemToObject(next, "Humidity", cJSON_CreateNumber(Humidity)); 

@@ -27,7 +27,7 @@ esp_err_t sht31_reset()
 	return ESP_OK;
 }
 
-void i2c_init() 
+void i2c_init(void) 
 {
 	int i2c_master_port = I2C_NUM;
 	i2c_config_t conf;
@@ -48,19 +48,9 @@ void i2c_init()
 }
 
 
-double sht31_readTemperature() 
-{
 
-	return temp;
-}
 
-double sht31_readHumidity() 
-{
-
-	return humidity;
-}
-
-bool sht31_readTempHum() 
+bool sht31_readTempHum(double* Temperature,double* Humidity) 
 {
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
@@ -129,7 +119,7 @@ bool sht31_readTempHum()
 	stemp /= 0xffff;
 	stemp = -45 + stemp;
 	int temp_int=stemp*10;
-	temp = (double)temp_int/10;	
+	*Temperature = (double)temp_int/10;	
 	//ESP_LOGW("SHT30", "stemp=%f", stemp);
 	//ESP_LOGE("SHT30", "temp=%f", temp);
 
@@ -137,7 +127,7 @@ bool sht31_readTempHum()
 	shum *= 100;
 	shum /= 0xFFFF;
 	int humidity_int=shum*10;
-	humidity = (double)humidity_int/10;
+	*Humidity = (double)humidity_int/10;
 	//ESP_LOGW("SHT30", "shum=%f", shum);
 	//ESP_LOGE("SHT30", "humidity=%f", humidity);
 
