@@ -34,9 +34,9 @@ void app_main(void)
   ESP_ERROR_CHECK( nvs_flash_init() );
 
   i2c_init();
-  tft_init();
   static ccs811_sensor_t* sensor ;
   sensor= ccs811_init_sensor();
+  tft_init();
 
   double Temperature;
   double Humidity;
@@ -47,6 +47,8 @@ void app_main(void)
   uint16_t eco2;
   char tvoc_c[20];
   char eco2_c[20];
+
+
   
 
   while(1)
@@ -57,13 +59,12 @@ void app_main(void)
 
       ESP_LOGI("SHT30", "Temperature=%.1f, Humidity=%.1f", Temperature, Humidity);
       font_transparent = 0; //有背景
-      TFT_setFont(USER_FONT, "/spiffs/fonts/Grotesk24x48.fon");
-      sprintf(Temperature_c,"%-4.1f",Temperature);//左对齐，4长度，不够补空格
-      sprintf(Humidity_c,"%-4.1f",Humidity);
-      _fg = TFT_YELLOW;
-      TFT_print(Temperature_c, 10, 80);
-      _fg = TFT_BLUE;
-      TFT_print(Humidity_c, 140, 80);
+      TFT_setFont(DEJAVU24_FONT, NULL);
+      sprintf(Temperature_c,"%02d",(int)Temperature);//左对齐，2长度，不够补空格
+      sprintf(Humidity_c,"%02d",(int)Humidity);
+      _fg = TFT_WHITE;
+      TFT_print(Temperature_c, 25, 3);
+      TFT_print(Humidity_c, 97, 3);
     }
 
     if (ccs811_get_results (sensor, &tvoc, &eco2, 0, 0))
@@ -73,16 +74,19 @@ void app_main(void)
       {
         sprintf(tvoc_c,"%-3d",tvoc);
         sprintf(eco2_c,"%-4d",eco2);
-        _fg = TFT_YELLOW;
-        TFT_print(tvoc_c, 10, 240);
-        _fg = TFT_BLUE;
-        TFT_print(eco2_c, 130, 240);
+        font_transparent = 0; //有背景
+        TFT_setFont(USER_FONT, "/spiffs/fonts/Grotesk24x48.fon");
+        //set_7seg_font_atrib(12, 2, 1, TFT_GREEN);
+        _fg = TFT_GREEN;
+        TFT_print(tvoc_c, 40, 205);
+        //_fg = TFT_GREEN;
+        TFT_print(eco2_c, 140, 205);
       }
 
       
     }
 
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1500 / portTICK_RATE_MS);
   }
 
 }
