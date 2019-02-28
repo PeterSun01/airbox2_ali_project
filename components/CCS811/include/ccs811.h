@@ -9,7 +9,7 @@
 #include <errno.h>
 
 // Uncomment one of the following defines to enable debug output
- //#define CCS811_DEBUG_LEVEL_1             // only error messages
+#define CCS811_DEBUG_LEVEL_1             // only error messages
 //#define CCS811_DEBUG_LEVEL_2             // debug and error messages
 
 

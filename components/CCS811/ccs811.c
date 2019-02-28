@@ -208,7 +208,7 @@ ccs811_sensor_t* ccs811_init_sensor(void)
     }
     
     // try to set default measurement mode to *ccs811_mode_1s*
-    if (!ccs811_set_mode(dev, ccs811_mode_1s))
+    if (!ccs811_set_mode(dev, ccs811_mode_10s))
     {
         free (dev);
         return NULL;
@@ -357,7 +357,7 @@ bool ccs811_set_environmental_data (ccs811_sensor_t* dev,
     // send environmental data to the sensor
     if (!ccs811_reg_write(dev, CCS811_REG_ENV_DATA, data, 4))
     {
-        error_dev ("Could not write environmental data to sensor.", __FUNCTION__, dev);
+        printf ("Could not write environmental data to sensor.");
         return false;
     }
     

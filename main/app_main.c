@@ -22,8 +22,8 @@
 #include "Beep.h"
 #include "sht31.h"
 #include "ccs811.h"
-
-
+#include "PM25.h"
+#include "formaldehyde.h"
 
 
 
@@ -37,6 +37,8 @@ void app_main(void)
   static ccs811_sensor_t* sensor ;
   sensor= ccs811_init_sensor();
   tft_init();
+  PM25_Init();
+  formaldehyde_Init();
 
   double Temperature;
   double Humidity;
@@ -49,18 +51,16 @@ void app_main(void)
   char eco2_c[20];
 
 
-  
-
   while(1)
   {
     if (sht31_readTempHum(&Temperature,&Humidity)) 
     {
 
-
+      //ccs811_set_environmental_data(sensor,(float)Temperature,(float)Humidity);//补偿CCS811
       ESP_LOGI("SHT30", "Temperature=%.1f, Humidity=%.1f", Temperature, Humidity);
       font_transparent = 0; //有背景
       TFT_setFont(DEJAVU24_FONT, NULL);
-      sprintf(Temperature_c,"%02d",(int)Temperature);//左对齐，2长度，不够补空格
+      sprintf(Temperature_c,"%02d",(int)Temperature);//左对齐，2长度
       sprintf(Humidity_c,"%02d",(int)Humidity);
       _fg = TFT_WHITE;
       TFT_print(Temperature_c, 25, 3);
@@ -82,6 +82,14 @@ void app_main(void)
         //_fg = TFT_GREEN;
         TFT_print(eco2_c, 140, 205);
       }
+
+    font_transparent = 0; //有背景
+    TFT_setFont(USER_FONT, "/spiffs/fonts/Grotesk24x48.fon");
+    //set_7seg_font_atrib(12, 2, 1, TFT_GREEN);
+    _fg = TFT_GREEN;
+    TFT_print(PM2_5_c, 140, 75);
+
+    TFT_print(formaldehyde_c, 40, 75);
 
       
     }

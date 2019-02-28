@@ -5,8 +5,14 @@
 #include "driver/uart.h"
 #include "driver/gpio.h"
 
+#include "esp_system.h"
+#include "esp_heap_caps.h"
+#include "tftspi.h"
+#include "tft.h"
+#include "spiffs_vfs.h"
+
 #include "Led.h"
-#include "PMS7003.h"
+#include "PM25.h"
 
 
 #define UART1_TXD  (UART_PIN_NO_CHANGE)
@@ -17,12 +23,12 @@
 #define BUF_SIZE    100
 
 
-static const char *TAG = "PMS7003";
+static const char *TAG = "PM25";
 
-void PMS7003_Read_Task(void* arg);
+void PM25_Read_Task(void* arg);
 
 
-void PMS7003_Init(void)
+void PM25_Init(void)
 {
      //配置GPIO
     gpio_config_t io_conf;
@@ -45,7 +51,7 @@ void PMS7003_Init(void)
     uart_param_config(UART_NUM_1, &uart_config);
     uart_set_pin(UART_NUM_1, UART1_TXD, UART1_RXD, UART1_RTS, UART1_CTS);
     uart_driver_install(UART_NUM_1, BUF_SIZE * 2, 0, 0, NULL, 0);
-    xTaskCreate(&PMS7003_Read_Task, "PMS7003_Read_Task", 2048, NULL, 10, NULL);
+    xTaskCreate(&PM25_Read_Task, "PM25_Read_Task", 2046, NULL, 10, NULL);
 }
 
 
@@ -57,7 +63,7 @@ static uint8_t	Check_PMSensor_DataValid(uint8_t* PM_Sensor_RxBuffer)
 	uint8_t 	i;
 	uint8_t     Result = 0;
 
-	if((PM_Sensor_RxBuffer[0] == 'B')&&(PM_Sensor_RxBuffer[1] == 'M'))
+	if((PM_Sensor_RxBuffer[0] == 0X32)&&(PM_Sensor_RxBuffer[1] == 0X3D))
 	{
 		Buffer_Len = (uint16_t)((PM_Sensor_RxBuffer[2] << 8) | PM_Sensor_RxBuffer[3]);
 
@@ -83,7 +89,7 @@ PM2.5浓度与LED指示
 */
 
 
-void PMS7003_Read_Task(void* arg)
+void PM25_Read_Task(void* arg)
 {
     uint8_t data_u1[BUF_SIZE];
     while(1)
@@ -96,10 +102,14 @@ void PMS7003_Read_Task(void* arg)
             {
                 PM2_5  = 0;
                 PM10   = 0;
-                PM2_5  = (uint16_t)((data_u1[12]<<8) | data_u1[13]);
-                PM10   = (uint16_t)((data_u1[14]<<8) | data_u1[15]);
-                //ESP_LOGI(TAG, "PM2_5=%d,PM10=%d", PM2_5,PM10);
-                if(PM2_5<=100)//优：0~100绿色
+                PM2_5  = (uint16_t)((data_u1[6]<<8) | data_u1[7]);
+                PM10   = (uint16_t)((data_u1[8]<<8) | data_u1[9]);
+                ESP_LOGI(TAG, "PM2_5=%d,PM10=%d", PM2_5,PM10);
+                sprintf(PM2_5_c,"%03d",PM2_5);//左对齐，3长度
+
+
+
+                /*if(PM2_5<=100)//优：0~100绿色
                 {
                     Led_STA_G_On();
                 }
@@ -110,7 +120,7 @@ void PMS7003_Read_Task(void* arg)
                 else if(PM2_5>300)//重度污染：301及以上 红色  
                 {
                     Led_STA_R_On();
-                }
+                }*/
             }
             bzero(data_u1,sizeof(data_u1));                 
         }  

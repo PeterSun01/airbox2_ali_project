@@ -1093,7 +1093,7 @@ void tft_init()
     printf("\r\n\n");
 	vfs_spiffs_register();
 	TFT_jpg_image(CENTER, CENTER, 0, SPIFFS_BASE_PATH"/images/logo.jpg", NULL, 0);
-	Wait(-10000);
+	Wait(-1000);
     if (!spiffs_is_mounted) 
 	{
 		_fg = TFT_RED;

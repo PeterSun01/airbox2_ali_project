@@ -13,7 +13,7 @@
 #include "E2prom.h"
 #include "Beep.h"
 #include "sht31.h"
-#include "PMS7003.h"
+#include "PM25.h"
 
 int beep=0;
 
