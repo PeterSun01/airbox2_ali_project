@@ -7,7 +7,6 @@
 
 uint16_t formaldehyde_ppb;
 uint16_t formaldehyde_ug;
-char formaldehyde_c[20];
 
 
 extern void formaldehyde_Init(void);

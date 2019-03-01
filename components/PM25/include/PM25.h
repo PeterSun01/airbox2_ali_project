@@ -7,7 +7,6 @@
 
 uint16_t PM2_5;
 uint16_t PM10;
-char PM2_5_c[20];
 
 
 extern void PM25_Init(void);

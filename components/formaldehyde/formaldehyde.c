@@ -100,31 +100,25 @@ void formaldehyde_Read_Task(void* arg)
             uint8_t check=Check_Sensor_DataValid(data_u2,len);
             printf("ckeck=0x%02x\n",check);*/
 
-
+            printf("formaldehyde\n");
             if(Check_Sensor_DataValid(data_u2,len)==data_u2[len-1])
             {
                 //printf("check ok\n");
                 if(data_u2[1]==0x86)
                 {
                     formaldehyde_ug=(uint16_t)((data_u2[2]<<4) | data_u2[3]);
-                    ESP_LOGI(TAG, "formaldehyde=%d(mg/m3)", formaldehyde_ug);
+                    ESP_LOGI(TAG, "formaldehyde=%d(ug/m3)", formaldehyde_ug);
                     formaldehyde_ppb=(uint16_t)((data_u2[6]<<4) | data_u2[7]);
                     ESP_LOGI(TAG, "formaldehyde=%d(ppb)", formaldehyde_ppb);
-                    sprintf(formaldehyde_c,"%03d",formaldehyde_ug);//左对齐，3长度
                 }
             }
-            len=0;
-            
-            /*if(Check_PMSensor_DataValid(data_u1)==1)//数据校验成功
+            else
             {
-                PM2_5  = 0;
-                PM10   = 0;
-                PM2_5  = (uint16_t)((data_u1[6]<<8) | data_u1[7]);
-                PM10   = (uint16_t)((data_u1[8]<<8) | data_u1[9]);
-                ESP_LOGI(TAG, "PM2_5=%d,PM10=%d", PM2_5,PM10);
-                sprintf(PM2_5_c,"%03d",PM2_5);//左对齐，3长度
+               printf("check err\n");
+            }
+            
+            len=0;
 
-            }*/
 
             bzero(data_u2,sizeof(data_u2));                 
         }  

@@ -105,7 +105,7 @@ void PM25_Read_Task(void* arg)
                 PM2_5  = (uint16_t)((data_u1[6]<<8) | data_u1[7]);
                 PM10   = (uint16_t)((data_u1[8]<<8) | data_u1[9]);
                 ESP_LOGI(TAG, "PM2_5=%d,PM10=%d", PM2_5,PM10);
-                sprintf(PM2_5_c,"%03d",PM2_5);//左对齐，3长度
+        
 
 
 

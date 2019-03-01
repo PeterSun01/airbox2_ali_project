@@ -25,7 +25,14 @@
 #include "PM25.h"
 #include "formaldehyde.h"
 
+/*
+co2     400-8192
+tvoc    0-1187(999) 
+pm2.5   0-1000
+甲醛     0-5000
 
+
+*/
 
 
 void app_main(void)
@@ -47,15 +54,12 @@ void app_main(void)
 
   uint16_t tvoc;
   uint16_t eco2;
-  char tvoc_c[20];
-  char eco2_c[20];
-
 
   while(1)
   {
+    
     if (sht31_readTempHum(&Temperature,&Humidity)) 
     {
-
       //ccs811_set_environmental_data(sensor,(float)Temperature,(float)Humidity);//补偿CCS811
       ESP_LOGI("SHT30", "Temperature=%.1f, Humidity=%.1f", Temperature, Humidity);
       font_transparent = 0; //有背景
@@ -69,30 +73,80 @@ void app_main(void)
 
     if (ccs811_get_results (sensor, &tvoc, &eco2, 0, 0))
     {
-      printf("CCS811 TVOC=%4d(ppb), eCO2=%4d(ppm)\n", tvoc, eco2);
-      if((tvoc<=999)&&(eco2<=8192))
+      printf("TVOC=%4d(ppb), eCO2=%4d(ppm)\n", tvoc, eco2);
+
+      if(tvoc<=200)
       {
-        sprintf(tvoc_c,"%-3d",tvoc);
-        sprintf(eco2_c,"%-4d",eco2);
-        font_transparent = 0; //有背景
-        TFT_setFont(USER_FONT, "/spiffs/fonts/Grotesk24x48.fon");
-        //set_7seg_font_atrib(12, 2, 1, TFT_GREEN);
         _fg = TFT_GREEN;
-        TFT_print(tvoc_c, 40, 205);
-        //_fg = TFT_GREEN;
-        TFT_print(eco2_c, 140, 205);
+        tft_print_fields(4,tvoc);
+      }
+      else if((tvoc>200)&&(tvoc<=400))
+      {
+        _fg = TFT_YELLOW;
+        tft_print_fields(4,tvoc);
+      }
+      else if((tvoc>400)&&(tvoc<=999))
+      {
+        _fg = TFT_RED;
+        tft_print_fields(4,tvoc);
       }
 
-    font_transparent = 0; //有背景
-    TFT_setFont(USER_FONT, "/spiffs/fonts/Grotesk24x48.fon");
-    //set_7seg_font_atrib(12, 2, 1, TFT_GREEN);
-    _fg = TFT_GREEN;
-    TFT_print(PM2_5_c, 140, 75);
-
-    TFT_print(formaldehyde_c, 40, 75);
-
-      
+      if(eco2<=800)
+      {
+        _fg = TFT_GREEN;
+        tft_print_fields(3,eco2);
+      }
+      else if((eco2>800)&&(eco2<=1200))
+      {
+        _fg = TFT_YELLOW;
+        tft_print_fields(3,eco2);
+      }
+      else if((eco2>1200)&&(eco2<=8192))
+      {
+        _fg = TFT_RED;
+        tft_print_fields(3,eco2);
+      }
     }
+
+    if(PM2_5<=150)
+    {
+      _fg = TFT_GREEN;
+      tft_print_fields(2,PM2_5);
+    }
+    else if((PM2_5>150)&&(PM2_5<=300))
+    {
+      _fg = TFT_YELLOW;
+      tft_print_fields(2,PM2_5);
+    }
+    else if((PM2_5>300)&&(PM2_5<=999))
+    {
+      _fg = TFT_RED;
+      tft_print_fields(2,PM2_5);
+    }
+    else if((PM2_5>999))
+    {
+      _fg = TFT_RED;
+      tft_print_fields(2,999);
+    }
+
+    if(formaldehyde_ug<=60)
+    {
+      _fg = TFT_GREEN;
+      tft_print_fields(1,formaldehyde_ug);
+    }
+    else if((formaldehyde_ug>60)&&(formaldehyde_ug<=80))
+    {
+      _fg = TFT_YELLOW;
+      tft_print_fields(1,formaldehyde_ug);
+    }
+    else if((formaldehyde_ug>80)&&(formaldehyde_ug<=5000))
+    {
+      _fg = TFT_RED;
+      tft_print_fields(1,formaldehyde_ug);
+    }
+
+
+
 
     vTaskDelay(1500 / portTICK_RATE_MS);
   }

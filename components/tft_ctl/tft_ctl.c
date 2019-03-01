@@ -958,6 +958,153 @@ void tft_demo()
 	}
 }
 
+/********************************************
+	-------------------------
+	|			|			|
+	|			|			|
+	|    1		|	 2		|
+	|			|			|
+	|			|			|
+	-------------------------		
+	|			|			|
+	|			|			|
+	|	 3		|	 4		|
+	|			|			|	
+	|			|			|	
+	-------------------------		
+********************************************/
+
+#define F1X1	0
+#define F1X2	12
+#define F1X3	0
+#define F1X4	12
+#define F1Y		71
+
+#define F2X1	(0+121)
+#define F2X2	(12+120)
+#define F2X3	(0+121)
+#define F2X4	(12+120)
+#define F2Y		71
+
+#define F3X1	0
+#define F3X2	12
+#define F3X3	0
+#define F3X4	12
+#define F3Y		201
+
+#define F4X1	(0+121)
+#define F4X2	(12+120)
+#define F4X3	(0+121)
+#define F4X4	(12+120)
+#define F4Y		201
+
+
+uint8_t tft_print_fields(uint8_t field_no,uint16_t data)
+{
+	char data_c[20];
+	font_transparent = 0; //有背景
+	TFT_setFont(USER_FONT, "/spiffs/fonts/Grotesk24x48.fon");
+
+	if(field_no==1)
+	{
+		if((data>=1000)&&(data<=9999))  //1000-9999 //4位数
+		{
+			sprintf(data_c,"%d",data);
+			TFT_print(data_c, F1X4,F1Y);
+		}
+		else if((data>=100)&&(data<=999))  //100-999 //3位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F1X3,F1Y);
+		}
+		else if((data>=10)&&(data<=99))  //10-99 //2位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F1X2,F1Y);
+		}		
+		else if((data>=0)&&(data<=9))  //0-9 //1位数
+		{
+			sprintf(data_c,"  %d  ",data);
+			TFT_print(data_c, F1X1,F1Y);
+		}		
+	}
+
+	if(field_no==2)
+	{
+		if((data>=1000)&&(data<=9999))  //1000-9999 //4位数
+		{
+			sprintf(data_c,"%d",data);
+			TFT_print(data_c, F2X4,F2Y);
+		}
+		else if((data>=100)&&(data<=999))  //100-999 //3位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F2X3,F2Y);
+		}
+		else if((data>=10)&&(data<=99))  //10-99 //2位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F2X2,F2Y);
+		}		
+		else if((data>=0)&&(data<=9))  //0-9 //1位数
+		{
+			sprintf(data_c,"  %d  ",data);
+			TFT_print(data_c, F2X1,F2Y);	
+		}	
+	}
+
+	if(field_no==3)
+	{
+		if((data>=1000)&&(data<=9999))  //1000-9999 //4位数
+		{
+			sprintf(data_c,"%d",data);
+			TFT_print(data_c, F3X4,F3Y);
+		}
+		else if((data>=100)&&(data<=999))  //100-999 //3位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F3X3,F3Y);
+		}
+		else if((data>=10)&&(data<=99))  //10-99 //2位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F3X2,F3Y);
+		}		
+		else if((data>=0)&&(data<=9))  //0-9 //1位数
+		{
+			sprintf(data_c,"  %d  ",data);
+			TFT_print(data_c, F3X1,F3Y);	
+		}	
+	}
+
+	if(field_no==4)
+	{
+		if((data>=1000)&&(data<=9999))  //1000-9999 //4位数
+		{
+			sprintf(data_c,"%d",data);
+			TFT_print(data_c, F4X4,F4Y);
+		}
+		else if((data>=100)&&(data<=999))  //100-999 //3位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F4X3,F4Y);
+		}
+		else if((data>=10)&&(data<=99))  //10-99 //2位数
+		{
+			sprintf(data_c," %d ",data);
+			TFT_print(data_c, F4X2,F4Y);
+		}		
+		else if((data>=0)&&(data<=9))  //0-9 //1位数
+		{
+			sprintf(data_c,"  %d  ",data);
+			TFT_print(data_c, F4X1,F4Y);	
+		}	
+	
+	}
+
+	return 1;
+}
+
 
 
 
@@ -1118,14 +1265,14 @@ void tft_init()
 	TFT_jpg_image(10, 31, 0, SPIFFS_BASE_PATH"/images/formaldehyde.jpg", NULL, 0);
 	TFT_jpg_image(10, 125, 0, SPIFFS_BASE_PATH"/images/ugm3.jpg", NULL, 0);
 
-	TFT_jpg_image(10,161, 0, SPIFFS_BASE_PATH"/images/tvoc.jpg", NULL, 0);
-	TFT_jpg_image(10, 255, 0, SPIFFS_BASE_PATH"/images/ppb.jpg", NULL, 0);
+	TFT_jpg_image(10,161, 0, SPIFFS_BASE_PATH"/images/co2.jpg", NULL, 0);
+	TFT_jpg_image(10, 255, 0, SPIFFS_BASE_PATH"/images/ppm.jpg", NULL, 0);
 
 	TFT_jpg_image(130, 31, 0, SPIFFS_BASE_PATH"/images/pm25.jpg", NULL, 0);
 	TFT_jpg_image(130, 125, 0, SPIFFS_BASE_PATH"/images/ugm3.jpg", NULL, 0);
 
-	TFT_jpg_image(130,161, 0, SPIFFS_BASE_PATH"/images/co2.jpg", NULL, 0);
-	TFT_jpg_image(130, 255, 0, SPIFFS_BASE_PATH"/images/ppm.jpg", NULL, 0);
+	TFT_jpg_image(130,161, 0, SPIFFS_BASE_PATH"/images/tvoc.jpg", NULL, 0);
+	TFT_jpg_image(130, 255, 0, SPIFFS_BASE_PATH"/images/ppb.jpg", NULL, 0);
 
 	//font_transparent = 1; //无背景
 	//TFT_setFont(UBUNTU16_FONT, NULL);
