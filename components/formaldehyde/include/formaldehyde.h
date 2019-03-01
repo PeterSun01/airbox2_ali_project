@@ -8,6 +8,8 @@
 uint16_t formaldehyde_ppb;
 uint16_t formaldehyde_ug;
 
+uint8_t formaldehyde_flag;
+
 
 extern void formaldehyde_Init(void);
 

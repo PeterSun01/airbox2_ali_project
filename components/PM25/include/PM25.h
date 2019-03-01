@@ -8,6 +8,8 @@
 uint16_t PM2_5;
 uint16_t PM10;
 
+uint8_t PM2_5_flag;
+
 
 extern void PM25_Init(void);
 

@@ -1003,6 +1003,7 @@ uint8_t tft_print_fields(uint8_t field_no,uint16_t data)
 {
 	char data_c[20];
 	font_transparent = 0; //有背景
+	text_wrap = 0;//无换行
 	TFT_setFont(USER_FONT, "/spiffs/fonts/Grotesk24x48.fon");
 
 	if(field_no==1)
@@ -1273,6 +1274,11 @@ void tft_init()
 
 	TFT_jpg_image(130,161, 0, SPIFFS_BASE_PATH"/images/tvoc.jpg", NULL, 0);
 	TFT_jpg_image(130, 255, 0, SPIFFS_BASE_PATH"/images/ppb.jpg", NULL, 0);
+
+	TFT_jpg_image(0, 293, 0, SPIFFS_BASE_PATH"/images/zhcp.jpg", NULL, 0);
+
+	//TFT_jpg_image(80, 293, 0, SPIFFS_BASE_PATH"/images/cp1.jpg", NULL, 0);
+
 
 	//font_transparent = 1; //无背景
 	//TFT_setFont(UBUNTU16_FONT, NULL);

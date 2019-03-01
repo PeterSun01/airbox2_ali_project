@@ -25,5 +25,10 @@ extern bool sht31_readTempHum(double* Temperature,double* Humidity) ;
 extern esp_err_t sht31_reset();
 extern uint8_t sht31_crc8(const uint8_t *data, int len);
 
+double Temperature;
+double Humidity;
+char Temperature_c[20];
+char Humidity_c[20];
+
 
 #endif /* _COMPONENT_SHT31_H_ */

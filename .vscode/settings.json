@@ -2,6 +2,9 @@
     "files.associations": {
         "tftspi.h": "c",
         "sht31.h": "c",
-        "esp8266_wrapper.h": "c"
+        "esp8266_wrapper.h": "c",
+        "ccs811.h": "c",
+        "esp_log.h": "c",
+        "i2c.h": "c"
     }
 }

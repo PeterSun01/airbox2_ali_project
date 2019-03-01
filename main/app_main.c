@@ -47,13 +47,7 @@ void app_main(void)
   PM25_Init();
   formaldehyde_Init();
 
-  double Temperature;
-  double Humidity;
-  char Temperature_c[20];
-  char Humidity_c[20];
-
-  uint16_t tvoc;
-  uint16_t eco2;
+  //int x=5000;
 
   while(1)
   {
@@ -78,32 +72,38 @@ void app_main(void)
       if(tvoc<=200)
       {
         _fg = TFT_GREEN;
+        tvoc_flag=1;
         tft_print_fields(4,tvoc);
       }
       else if((tvoc>200)&&(tvoc<=400))
       {
         _fg = TFT_YELLOW;
+        tvoc_flag=2;
         tft_print_fields(4,tvoc);
       }
       else if((tvoc>400)&&(tvoc<=999))
       {
         _fg = TFT_RED;
+        tvoc_flag=3;
         tft_print_fields(4,tvoc);
       }
 
       if(eco2<=800)
       {
         _fg = TFT_GREEN;
+        eco2_flag=1;
         tft_print_fields(3,eco2);
       }
       else if((eco2>800)&&(eco2<=1200))
       {
         _fg = TFT_YELLOW;
+        eco2_flag=2;
         tft_print_fields(3,eco2);
       }
       else if((eco2>1200)&&(eco2<=8192))
       {
         _fg = TFT_RED;
+        eco2_flag=3;
         tft_print_fields(3,eco2);
       }
     }
@@ -111,41 +111,65 @@ void app_main(void)
     if(PM2_5<=150)
     {
       _fg = TFT_GREEN;
+      PM2_5_flag=1;
       tft_print_fields(2,PM2_5);
     }
     else if((PM2_5>150)&&(PM2_5<=300))
     {
       _fg = TFT_YELLOW;
+      PM2_5_flag=2;
       tft_print_fields(2,PM2_5);
     }
     else if((PM2_5>300)&&(PM2_5<=999))
     {
       _fg = TFT_RED;
+      PM2_5_flag=3;
       tft_print_fields(2,PM2_5);
     }
     else if((PM2_5>999))
     {
       _fg = TFT_RED;
+      PM2_5_flag=3;
       tft_print_fields(2,999);
     }
 
+    
     if(formaldehyde_ug<=60)
     {
       _fg = TFT_GREEN;
+      formaldehyde_flag=1;
       tft_print_fields(1,formaldehyde_ug);
     }
     else if((formaldehyde_ug>60)&&(formaldehyde_ug<=80))
     {
       _fg = TFT_YELLOW;
+      formaldehyde_flag=2;
       tft_print_fields(1,formaldehyde_ug);
     }
     else if((formaldehyde_ug>80)&&(formaldehyde_ug<=5000))
     {
       _fg = TFT_RED;
+      formaldehyde_flag=3;
       tft_print_fields(1,formaldehyde_ug);
     }
 
-
+    if((tvoc_flag==1)&&(eco2_flag==1)&&(PM2_5_flag==1)&&(formaldehyde_flag==1))
+    {
+      TFT_jpg_image(80, 293, 0, SPIFFS_BASE_PATH"/images/cp1.jpg", NULL, 0);
+    }
+    else if((tvoc_flag==3)||(eco2_flag==3)||(PM2_5_flag==3)||(formaldehyde_flag==3))
+    {
+      TFT_jpg_image(80, 293, 0, SPIFFS_BASE_PATH"/images/cp3.jpg", NULL, 0);
+    }
+    else if((tvoc_flag==0)&&(eco2_flag==0)&&(PM2_5_flag==0)&&(formaldehyde_flag==0))
+    {
+      TFT_jpg_image(80, 293, 0, SPIFFS_BASE_PATH"/images/cp1.jpg", NULL, 0);
+    }    
+    else
+    {
+      TFT_jpg_image(80, 293, 0, SPIFFS_BASE_PATH"/images/cp2.jpg", NULL, 0);
+    }
+    
 
 
     vTaskDelay(1500 / portTICK_RATE_MS);

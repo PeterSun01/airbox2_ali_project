@@ -8,6 +8,12 @@
 #include "stdbool.h"
 #include <errno.h>
 
+uint16_t tvoc;
+uint16_t eco2;
+
+uint8_t tvoc_flag;
+uint8_t eco2_flag;
+
 // Uncomment one of the following defines to enable debug output
 #define CCS811_DEBUG_LEVEL_1             // only error messages
 //#define CCS811_DEBUG_LEVEL_2             // debug and error messages
