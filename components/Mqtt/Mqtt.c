@@ -23,7 +23,6 @@
 #include "Json_parse.h"
 #include "Smartconfig.h"
 #include "E2prom.h"
-#include "Led.h"
 #include "hmac_sha1.h"
 
 #define MQTT_JSON_TYPE  0X03
@@ -47,8 +46,8 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 
     switch (event->event_id)
     {
-       // case MQTT_EVENT_BEFORE_CONNECT:
-           // break;
+        case MQTT_EVENT_BEFORE_CONNECT:
+            break;
             
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
@@ -107,7 +106,7 @@ void Mqtt_Send_Msg(char* topic)
 
     msg_id = esp_mqtt_client_publish(client, topic, pCreat_json->creat_json_b, pCreat_json->creat_json_c, 0, 0);
     ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-    Led_Status=LED_STA_SENDDATA;
+    //Led_Status=LED_STA_SENDDATA;
 
     free(pCreat_json);
 }
@@ -175,5 +174,5 @@ void initialise_mqtt(void)
     xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT , false, true, portMAX_DELAY); 
     client = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_start(client);
-    xTaskCreate(MqttSend_Task, "MqttSend_Task", 4096, NULL, 5, NULL);
+    xTaskCreate(MqttSend_Task, "MqttSend_Task", 4096, NULL, 4, NULL);
 }

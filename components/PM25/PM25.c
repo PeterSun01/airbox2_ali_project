@@ -11,7 +11,6 @@
 #include "tft.h"
 #include "spiffs_vfs.h"
 
-#include "Led.h"
 #include "PM25.h"
 
 
@@ -51,6 +50,7 @@ void PM25_Init(void)
     uart_param_config(UART_NUM_1, &uart_config);
     uart_set_pin(UART_NUM_1, UART1_TXD, UART1_RXD, UART1_RTS, UART1_CTS);
     uart_driver_install(UART_NUM_1, BUF_SIZE * 2, 0, 0, NULL, 0);
+    PM2_5=0;
     xTaskCreate(&PM25_Read_Task, "PM25_Read_Task", 2046, NULL, 10, NULL);
 }
 

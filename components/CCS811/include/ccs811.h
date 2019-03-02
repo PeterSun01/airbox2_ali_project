@@ -90,6 +90,8 @@ typedef struct {
 
 } ccs811_sensor_t;
 
+extern void ccs811_init(void);
+
 
 /**
  * @brief	Initialize a CCS811 sensor

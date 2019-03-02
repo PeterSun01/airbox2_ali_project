@@ -66,6 +66,8 @@
 #define I2C_ACK_VAL  0x0
 #define I2C_NACK_VAL 0x1
 
+static ccs811_sensor_t* sensor ;
+
 typedef struct 
 {
     uint8_t reserved_1 :2;
@@ -126,6 +128,25 @@ int ccs811_data_read (uint8_t bus, uint8_t addr, const uint8_t *reg,
     i2c_cmd_link_delete(cmd);
 
     return err;
+}
+
+void ccs811_read_Task(void* arg)
+{
+    while(1)
+    {
+        ccs811_get_results (sensor, &tvoc, &eco2, 0, 0);
+        printf("TVOC=%4d(ppb), eCO2=%4d(ppm)\n", tvoc, eco2);
+        vTaskDelay(11000 / portTICK_RATE_MS);
+    }
+}
+
+void ccs811_init(void)
+{
+    
+    sensor= ccs811_init_sensor();
+    tvoc=0;
+    eco2=0;
+    xTaskCreate(&ccs811_read_Task, "ccs811_read_Task", 2046, NULL, 10, NULL);
 }
 
 ccs811_sensor_t* ccs811_init_sensor(void)

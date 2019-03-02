@@ -14,8 +14,8 @@
 #include "Beep.h"
 #include "sht31.h"
 #include "PM25.h"
-
-int beep=0;
+#include "ccs811.h"
+#include "formaldehyde.h"
 
 
 esp_err_t parse_Uart0(char *json_data)
@@ -85,7 +85,7 @@ esp_err_t parse_Uart0(char *json_data)
 	"method": "thing.service.property.set",
 	"id": "216373306",
 	"params": {
-		"Switch_JDQ": 0
+		"photo": 0
 	},
 	"version": "1.0.0"
 }
@@ -128,17 +128,9 @@ esp_err_t parse_objects_mqtt(char *json_data)
         printf("cJSON_Print= %s\n",iot_params);
 
         iot_params_parse = cJSON_Parse(iot_params);
-        iot_params_parse_Switch_JDQ = cJSON_GetObjectItem(iot_params_parse, "Switch_JDQ"); 
-        printf("Switch_JDQ= %d\n", iot_params_parse_Switch_JDQ->valueint);
-        beep=iot_params_parse_Switch_JDQ->valueint;
-        if(beep==1)
-        {
-            Beep_On();
-        }
-        else if(beep==0)
-        {
-            Beep_Off();
-        }
+        iot_params_parse_Switch_JDQ = cJSON_GetObjectItem(iot_params_parse, "photo"); 
+        printf("photo= %d\n", iot_params_parse_Switch_JDQ->valueint);
+        photo=iot_params_parse_Switch_JDQ->valueint;
         
         free(iot_params);
         cJSON_Delete(iot_params_parse);
@@ -156,46 +148,33 @@ esp_err_t parse_objects_mqtt(char *json_data)
 {
 	"method": "thing.event.property.post",
 	"params": {
-		"Temperature": 1,
-		"LightLux": 5,
-		"PM25": 3,
-		"Humidity": 2,
-		"PM10": 4,
-		"HumanDetectionSwitch": 1,
-		"Switch_JDQ": 0
+		"CO2": 1,
+		"CurrentHumidity": 5,
+		"CurrentTemperature": 3,
+		"HCHO": 2,
+		"PM25": 4,
+		"TVOC": 1,
+		"RSSI": 0
 	}
 }
 */
 
 void create_mqtt_json(creat_json *pCreat_json)
 {
-
-    double Temperature;
-    double Humidity;
     cJSON *root = cJSON_CreateObject();
     cJSON *next = cJSON_CreateObject();
 
     cJSON_AddItemToObject(root, "method", cJSON_CreateString("thing.event.property.post"));
     cJSON_AddItemToObject(root, "params", next);
 
-    if (sht31_readTempHum(&Temperature,&Humidity)) 
-    {		
 
-
-        cJSON_AddItemToObject(next, "Temperature", cJSON_CreateNumber(Temperature));
-        cJSON_AddItemToObject(next, "Humidity", cJSON_CreateNumber(Humidity)); 
-        ESP_LOGI("SHT30", "Temperature=%.1f, Humidity=%.1f", Temperature, Humidity);
-	} 
-    else 
-    {
-		ESP_LOGE("SHT30", "SHT31_ReadTempHum : failed");
-	}
-    cJSON_AddItemToObject(next, "LightLux", cJSON_CreateNumber(0));
-    cJSON_AddItemToObject(next, "PM25", cJSON_CreateNumber(PM2_5));
-    cJSON_AddItemToObject(next, "PM10", cJSON_CreateNumber(PM10));
-    ESP_LOGI("PMS7003", "PM2_5=%d,PM10=%d", PM2_5,PM10);
-    cJSON_AddItemToObject(next, "HumanDetectionSwitch", cJSON_CreateNumber(1));
-    cJSON_AddItemToObject(next, "Switch_JDQ", cJSON_CreateNumber(beep));
+    cJSON_AddItemToObject(next, "CurrentTemperature", cJSON_CreateNumber(Temperature));
+    cJSON_AddItemToObject(next, "CurrentHumidity", cJSON_CreateNumber(Humidity)); 
+    cJSON_AddItemToObject(next, "CO2", cJSON_CreateNumber(eco2));
+    cJSON_AddItemToObject(next, "HCHO", cJSON_CreateNumber(formaldehyde_ug));
+    cJSON_AddItemToObject(next, "PM25", cJSON_CreateNumber(PM2_5));  
+    cJSON_AddItemToObject(next, "TVOC", cJSON_CreateNumber(tvoc));
+    cJSON_AddItemToObject(next, "photo", cJSON_CreateNumber(photo));
     wifi_ap_record_t wifidata;
     if (esp_wifi_sta_get_ap_info(&wifidata) == 0)
     {

@@ -20,9 +20,13 @@
 #include "nvs_flash.h"
 #include "tcpip_adapter.h"
 #include "esp_smartconfig.h"
+
+#include "esp_heap_caps.h"
+#include "tftspi.h"
+#include "tft.h"
+#include "spiffs_vfs.h"
 //usr include
 #include "Smartconfig.h"
-#include "Led.h"
 
 #define NEEDTOUCH_Y 0X00
 #define NEEDTOUCH_N 0X01
@@ -38,20 +42,20 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
     case SYSTEM_EVENT_STA_START:
         if(need_touch==NEEDTOUCH_Y)
         {
-            Led_Status=LED_STA_TOUCH;
             xTaskCreate(smartconfig_example_task, "smartconfig_example_task", 4096, NULL, 3, NULL);
         }
         printf("wifi event start\n");
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
         printf("wifi conneced\n");
-        Led_Status=LED_STA_INIT;
+        WifiStatus=WIFISTATUS_CONNET;
+        TouchStatus=TOUCHSTATUS_NOTOUCH;
         xEventGroupSetBits(s_wifi_event_group, CONNECTED_BIT);
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         esp_wifi_connect();
         printf("wifi disconneced\n");
-        Led_Status=LED_STA_WIFIERR;
+        WifiStatus=WIFISTATUS_DISCONNET;
         xEventGroupClearBits(s_wifi_event_group, CONNECTED_BIT);
         break;
     default:
@@ -64,6 +68,7 @@ void re_touch(void)//用户按键重新配置wifi
 {
     ESP_ERROR_CHECK(esp_wifi_stop());
     need_touch=NEEDTOUCH_Y;
+    
     ESP_ERROR_CHECK( esp_wifi_start() );
 
 }
@@ -92,6 +97,7 @@ void initialise_wifi(void)
     else//进入配网
     {
         need_touch=NEEDTOUCH_Y;
+        
         ESP_ERROR_CHECK( esp_wifi_start() );
     }
 }
@@ -135,6 +141,7 @@ static void sc_callback(smartconfig_status_t status, void *pdata)
 void smartconfig_example_task(void * parm)
 {
     //EventBits_t uxBits;
+    TouchStatus=TOUCHSTATUS_TOUCH;
     ESP_ERROR_CHECK( esp_smartconfig_set_type(SC_TYPE_ESPTOUCH) );
     ESP_ERROR_CHECK( esp_smartconfig_start(sc_callback) );
     while (1) 
@@ -156,7 +163,7 @@ void smartconfig_example_task(void * parm)
         xEventGroupWaitBits(s_wifi_event_group, ESPTOUCH_DONE_BIT, true, false, portMAX_DELAY);
         ESP_LOGI(TAG, "smartconfig over");
         esp_smartconfig_stop();
-
+        TouchStatus=TOUCHSTATUS_NOTOUCH;
         vTaskDelete(NULL);
 
     }

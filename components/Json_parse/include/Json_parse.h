@@ -9,6 +9,8 @@ typedef struct
     int creat_json_c;
 } creat_json;
 
+bool photo;
+
 
 esp_err_t parse_objects_http_active(char *http_json_data);
 esp_err_t parse_objects_mqtt(char *json_data);

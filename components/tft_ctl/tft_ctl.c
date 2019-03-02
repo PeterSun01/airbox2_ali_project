@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
+#include "Json_parse.h"
 #include "freertos/task.h"
 #include "esp_system.h"
 #include "driver/gpio.h"
@@ -106,7 +107,7 @@ static int Wait(int ms)
 }
 
 //-------------------------------------------------------------------
-static unsigned int rand_interval(unsigned int min, unsigned int max)
+unsigned int rand_interval(unsigned int min, unsigned int max)
 {
     int r;
     const unsigned int range = 1 + max - min;
@@ -1106,7 +1107,30 @@ uint8_t tft_print_fields(uint8_t field_no,uint16_t data)
 	return 1;
 }
 
+void tft_main_board(void)
+{
+	//显示主图底图
+	TFT_jpg_image(CENTER, CENTER, 0, SPIFFS_BASE_PATH"/images/main1.jpg", NULL, 0);
+	//显示顶端图标
+	TFT_jpg_image(0, 0, 0, SPIFFS_BASE_PATH"/images/temperature.jpg", NULL, 0);
+	TFT_jpg_image(70, 0, 0, SPIFFS_BASE_PATH"/images/humidity.jpg", NULL, 0);
+	//TFT_jpg_image(180, 0, 0, SPIFFS_BASE_PATH"/images/wifi-error.jpg", NULL, 0);
+	TFT_jpg_image(210, 0, 0, SPIFFS_BASE_PATH"/images/battery.jpg", NULL, 0);
+	//显示四宫格标题和单位
+	TFT_jpg_image(10, 31, 0, SPIFFS_BASE_PATH"/images/formaldehyde.jpg", NULL, 0);
+	TFT_jpg_image(10, 125, 0, SPIFFS_BASE_PATH"/images/ugm3.jpg", NULL, 0);
 
+	TFT_jpg_image(10,161, 0, SPIFFS_BASE_PATH"/images/co2.jpg", NULL, 0);
+	TFT_jpg_image(10, 255, 0, SPIFFS_BASE_PATH"/images/ppm.jpg", NULL, 0);
+
+	TFT_jpg_image(130, 31, 0, SPIFFS_BASE_PATH"/images/pm25.jpg", NULL, 0);
+	TFT_jpg_image(130, 125, 0, SPIFFS_BASE_PATH"/images/ugm3.jpg", NULL, 0);
+
+	TFT_jpg_image(130,161, 0, SPIFFS_BASE_PATH"/images/tvoc.jpg", NULL, 0);
+	TFT_jpg_image(130, 255, 0, SPIFFS_BASE_PATH"/images/ppb.jpg", NULL, 0);
+
+	TFT_jpg_image(0, 293, 0, SPIFFS_BASE_PATH"/images/zhcp.jpg", NULL, 0);
+}
 
 
 void tft_init()
@@ -1170,7 +1194,7 @@ void tft_init()
 
     // ====================================================================================================================
 
-
+	photo=0;
     vTaskDelay(500 / portTICK_RATE_MS);
 	
 	//init spi
@@ -1255,41 +1279,7 @@ void tft_init()
 	Wait(-2000);
 
 
-	//显示主图底图
-	TFT_jpg_image(CENTER, CENTER, 0, SPIFFS_BASE_PATH"/images/main1.jpg", NULL, 0);
-	//显示顶端图标
-	TFT_jpg_image(0, 0, 0, SPIFFS_BASE_PATH"/images/temperature.jpg", NULL, 0);
-	TFT_jpg_image(70, 0, 0, SPIFFS_BASE_PATH"/images/humidity.jpg", NULL, 0);
-	TFT_jpg_image(180, 0, 0, SPIFFS_BASE_PATH"/images/wifi-error.jpg", NULL, 0);
-	TFT_jpg_image(210, 0, 0, SPIFFS_BASE_PATH"/images/battery.jpg", NULL, 0);
-	//显示四宫格标题和单位
-	TFT_jpg_image(10, 31, 0, SPIFFS_BASE_PATH"/images/formaldehyde.jpg", NULL, 0);
-	TFT_jpg_image(10, 125, 0, SPIFFS_BASE_PATH"/images/ugm3.jpg", NULL, 0);
-
-	TFT_jpg_image(10,161, 0, SPIFFS_BASE_PATH"/images/co2.jpg", NULL, 0);
-	TFT_jpg_image(10, 255, 0, SPIFFS_BASE_PATH"/images/ppm.jpg", NULL, 0);
-
-	TFT_jpg_image(130, 31, 0, SPIFFS_BASE_PATH"/images/pm25.jpg", NULL, 0);
-	TFT_jpg_image(130, 125, 0, SPIFFS_BASE_PATH"/images/ugm3.jpg", NULL, 0);
-
-	TFT_jpg_image(130,161, 0, SPIFFS_BASE_PATH"/images/tvoc.jpg", NULL, 0);
-	TFT_jpg_image(130, 255, 0, SPIFFS_BASE_PATH"/images/ppb.jpg", NULL, 0);
-
-	TFT_jpg_image(0, 293, 0, SPIFFS_BASE_PATH"/images/zhcp.jpg", NULL, 0);
-
-	//TFT_jpg_image(80, 293, 0, SPIFFS_BASE_PATH"/images/cp1.jpg", NULL, 0);
-
-
-	//font_transparent = 1; //无背景
-	//TFT_setFont(UBUNTU16_FONT, NULL);
-	//_fg = TFT_WHITE;
-	//TFT_print("Temperature", 5, 40);
-
-	//TFT_print("Humidity", 150, 40);
-
-
-
-	//tft_demo();
+	tft_main_board();
 }
 
 

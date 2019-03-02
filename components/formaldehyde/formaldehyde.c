@@ -5,7 +5,6 @@
 #include "driver/uart.h"
 #include "driver/gpio.h"
 
-#include "Led.h"
 #include "formaldehyde.h"
 
 
@@ -55,6 +54,7 @@ void formaldehyde_Init(void)
     uart_driver_install(UART_NUM_2, BUF_SIZE * 2, 0, 0, NULL, 0);
 
     uart_write_bytes(UART_NUM_2, wzs_init_cmd, 9);
+    formaldehyde_ug=0;
 
     xTaskCreate(&formaldehyde_Read_Task, "formaldehyde_Read_Task", 2046, NULL, 10, NULL);
 }
@@ -114,7 +114,7 @@ void formaldehyde_Read_Task(void* arg)
             }
             else
             {
-               printf("check err\n");
+               printf("formaldehyde check err\n");
             }
             
             len=0;
@@ -122,7 +122,7 @@ void formaldehyde_Read_Task(void* arg)
 
             bzero(data_u2,sizeof(data_u2));                 
         }  
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(5000 / portTICK_RATE_MS);
     }   
 }
 

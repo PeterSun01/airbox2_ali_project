@@ -19,6 +19,15 @@
 #define BUF_SIZE    256
 static const char *TAG = "UART0";
 
+static void Uart0_Task(void* arg)
+{
+    while(1)
+    {
+        Uart0_read();
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }  
+}
+
 
 void Uart0_Init(void)
 {
@@ -33,6 +42,8 @@ void Uart0_Init(void)
     uart_param_config(UART_NUM_0, &uart_config);
     uart_set_pin(UART_NUM_0, UART0_TXD, UART0_RXD, UART0_RTS, UART0_CTS);
     uart_driver_install(UART_NUM_0, BUF_SIZE * 2, 0, 0, NULL, 0);
+
+    xTaskCreate(Uart0_Task, "Uart0_Task", 4096, NULL, 10, NULL);
 
 }
 
@@ -49,6 +60,7 @@ void Uart0_read(void)
         parse_Uart0((char *)data_u0);
         bzero(data_u0,sizeof(data_u0));
     }
+    
      
 }
 

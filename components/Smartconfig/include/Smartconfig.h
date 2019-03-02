@@ -20,9 +20,13 @@ void re_touch(void);
 
 
 
-#define WIFISTATUS_CONNET       0X01
-#define WIFISTATUS_DISCONNET    0X00
+#define WIFISTATUS_CONNET       0X00
+#define WIFISTATUS_DISCONNET    0X01
 uint8_t WifiStatus;
+
+#define TOUCHSTATUS_TOUCH       0X00
+#define TOUCHSTATUS_NOTOUCH     0X01
+uint8_t TouchStatus;
 
 
 #endif

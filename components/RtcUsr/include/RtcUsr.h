@@ -4,7 +4,7 @@
 
 extern void Rtc_Set(int year,int mon,int day,int hour,int min,int sec);
 extern void Rtc_Read(int* year,int* month,int* day,int* hour,int* min,int* sec);
-
+extern void sntp_usr_init(void);
 
 #endif
 

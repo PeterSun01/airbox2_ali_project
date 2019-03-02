@@ -27,6 +27,16 @@ esp_err_t sht31_reset()
 	return ESP_OK;
 }
 
+void sht30_read_Task(void* arg)
+{
+    while(1)
+    {
+        sht31_readTempHum(&Temperature,&Humidity);
+        ESP_LOGI("SHT30", "Temperature=%.1f, Humidity=%.1f", Temperature, Humidity);
+        vTaskDelay(1500 / portTICK_RATE_MS);
+    }
+}
+
 void i2c_init(void) 
 {
 	int i2c_master_port = I2C_NUM;
@@ -45,6 +55,7 @@ void i2c_init(void)
 
 	sht31_reset();
 	vTaskDelay(10 / portTICK_PERIOD_MS);
+	xTaskCreate(&sht30_read_Task, "sht30_read_Task", 2046, NULL, 10, NULL);
 }
 
 

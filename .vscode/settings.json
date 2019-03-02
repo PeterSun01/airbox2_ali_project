@@ -5,6 +5,14 @@
         "esp8266_wrapper.h": "c",
         "ccs811.h": "c",
         "esp_log.h": "c",
-        "i2c.h": "c"
+        "i2c.h": "c",
+        "pm25.h": "c",
+        "smartconfig.h": "c",
+        "key.h": "c",
+        "esp_event_loop.h": "c",
+        "esp_smartconfig.h": "c",
+        "json_parse.h": "c",
+        "tft_ctl.h": "c",
+        "rtcusr.h": "c"
     }
 }
