@@ -150,19 +150,19 @@ void Tft_Print_main(void)
       tft_print_fields(4,tvoc);
     }
 
-    if(eco2<=800)
+    if(eco2<=1000)
     {
       _fg = TFT_GREEN;
       eco2_flag=1;
       tft_print_fields(3,eco2);
     }
-    else if((eco2>800)&&(eco2<=1200))
+    else if((eco2>1000)&&(eco2<=2000))
     {
       _fg = TFT_YELLOW;
       eco2_flag=2;
       tft_print_fields(3,eco2);
     }
-    else if((eco2>1200)&&(eco2<=8192))
+    else if((eco2>2000)&&(eco2<=8192))
     {
       _fg = TFT_RED;
       eco2_flag=3;
@@ -196,19 +196,19 @@ void Tft_Print_main(void)
     }
 
     
-    if(formaldehyde_ug<=60)
+    if(formaldehyde_ug<=80)
     {
       _fg = TFT_GREEN;
       formaldehyde_flag=1;
       tft_print_fields(1,formaldehyde_ug);
     }
-    else if((formaldehyde_ug>60)&&(formaldehyde_ug<=80))
+    else if((formaldehyde_ug>80)&&(formaldehyde_ug<=100))
     {
       _fg = TFT_YELLOW;
       formaldehyde_flag=2;
       tft_print_fields(1,formaldehyde_ug);
     }
-    else if((formaldehyde_ug>80)&&(formaldehyde_ug<=5000))
+    else if((formaldehyde_ug>100)&&(formaldehyde_ug<=5000))
     {
       _fg = TFT_RED;
       formaldehyde_flag=3;

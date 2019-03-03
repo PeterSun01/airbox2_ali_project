@@ -13,6 +13,7 @@
         "esp_smartconfig.h": "c",
         "json_parse.h": "c",
         "tft_ctl.h": "c",
-        "rtcusr.h": "c"
+        "rtcusr.h": "c",
+        "queue.h": "c"
     }
 }

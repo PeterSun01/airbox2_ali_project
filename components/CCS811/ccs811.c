@@ -135,7 +135,7 @@ void ccs811_read_Task(void* arg)
     while(1)
     {
         ccs811_get_results (sensor, &tvoc, &eco2, 0, 0);
-        printf("TVOC=%4d(ppb), eCO2=%4d(ppm)\n", tvoc, eco2);
+        printf("TVOC=%d(ppb), eCO2=%d(ppm)\n", tvoc, eco2);
         vTaskDelay(11000 / portTICK_RATE_MS);
     }
 }

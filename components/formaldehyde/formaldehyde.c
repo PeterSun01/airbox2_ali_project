@@ -86,21 +86,17 @@ void formaldehyde_Read_Task(void* arg)
     while(1)
     {
         uart_write_bytes(UART_NUM_2, wzs_query_cmd, 9);
-        //uart_write_bytes(UART_NUM_2, wzs_init_cmd, 9);
-        vTaskDelay(5 / portTICK_RATE_MS);
-        int len = uart_read_bytes(UART_NUM_2, data_u2, BUF_SIZE, 20 / portTICK_RATE_MS);
+        int len = uart_read_bytes(UART_NUM_2, data_u2, BUF_SIZE, 10 / portTICK_RATE_MS);
         if(len!=0)  //读取到传感器数据
         {
-            /*printf("formaldehyde=");
+            printf("formaldehyde=");
             for(int i=0;i<len;i++)
             {
                 printf("0x%02x ",data_u2[i]);
             }
             printf("\n");
             uint8_t check=Check_Sensor_DataValid(data_u2,len);
-            printf("ckeck=0x%02x\n",check);*/
-
-            printf("formaldehyde\n");
+            //printf("ckeck=0x%02x\n",check);
             if(Check_Sensor_DataValid(data_u2,len)==data_u2[len-1])
             {
                 //printf("check ok\n");
@@ -108,18 +104,16 @@ void formaldehyde_Read_Task(void* arg)
                 {
                     formaldehyde_ug=(uint16_t)((data_u2[2]<<4) | data_u2[3]);
                     ESP_LOGI(TAG, "formaldehyde=%d(ug/m3)", formaldehyde_ug);
-                    formaldehyde_ppb=(uint16_t)((data_u2[6]<<4) | data_u2[7]);
-                    ESP_LOGI(TAG, "formaldehyde=%d(ppb)", formaldehyde_ppb);
+                    //formaldehyde_ppb=(uint16_t)((data_u2[6]<<4) | data_u2[7]);
+                    //ESP_LOGI(TAG, "formaldehyde=%d(ppb)", formaldehyde_ppb);
                 }
             }
             else
             {
                printf("formaldehyde check err\n");
             }
-            
+    
             len=0;
-
-
             bzero(data_u2,sizeof(data_u2));                 
         }  
         vTaskDelay(5000 / portTICK_RATE_MS);
