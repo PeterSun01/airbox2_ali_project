@@ -23,13 +23,9 @@
 #include "E2prom.h"
 #include "hmac_sha1.h"
 
-#define WEB_SERVER "https://iot-auth.cn-shanghai.aliyuncs.com/auth/register/device"
-#define WEB_PORT "443"
+#define WEB_SERVER "https://free-api.heweather.net/s6/weather/forecast"
+#define WEB_PORT "80"
 
-
-//#define WEB_SERVER "iot-auth.cn-shanghai.aliyuncs.com"
-//#define WEB_PORT "443"
-//#define WEB_URL "https://iot-auth.cn-shanghai.aliyuncs.com/auth/register/device"
 
 extern const int CONNECTED_BIT;
 static char *TAG = "HTTP";
@@ -81,7 +77,7 @@ struct HTTP_STA
           "\r\n\r\n"};
 
 
-int http_activate(void)
+int http_get_weather(void)
 {
     const struct addrinfo hints = {
         .ai_family = AF_INET,
@@ -96,30 +92,10 @@ int http_activate(void)
     char build_register_json[512];
     char recv_buf[1024];
 
-    //deviceNameAAA0001productKeya1H0wMSt8Nerandom123
-    
-    char sign_data[256]="\0";
-    char sign[41];
 
-    bzero(sign_data,sizeof(sign_data));
-    sprintf(sign_data,"%s%s%s%s%s","deviceName",DeviceName,"productKey",ProductKey,"random123");
-    printf("dasign_datata=%s\n",sign_data);
-    bzero(sign,sizeof(sign));
-    aliyun_iot_common_hmac_sha1(sign_data, strlen(sign_data), sign, DeviceSecret, strlen(DeviceSecret));
-    printf("sign=%s\n",sign);
-
-    sprintf(build_register_json,"productKey=%s&deviceName=%s&random=123&sign=%s&signMethod=hmacsha1",ProductKey,DeviceName,sign);
-
-    /*
-    URL=https://iot-auth.cn-shanghai.aliyuncs.com/auth/register/device
-
-    POST /auth/register/device  HTTP/1.1
-    Host: iot-auth.cn-shanghai.aliyuncs.com
-    Content-Type: application/x-www-form-urlencoded
-    Content-Length: 123
-
-    productKey=a1H0wMSt8Ne&deviceName=AAA0001&random=123&sign=64c562ece11efd1e43fb85469cf9530bf1e3dbff&signMethod=hmacsha1
-    */
+/*
+https://free-api.heweather.net/s6/weather/forecast?location=CN101070201&key=0db1f83d104e4e24aab397c48bd16223
+*/
 
     sprintf(build_post_url, "%s%s%s%s%s%s%d%s%s", http.POST, http.POST_URL1,http.HTTP_VERSION11, 
                                                     http.HOST, 

@@ -88,6 +88,7 @@ void initialise_wifi(void)
     if (s_staconf.sta.ssid[0] != '\0')//当前有连过的wifi直接连接
     {
         need_touch=NEEDTOUCH_N;
+        TouchStatus=TOUCHSTATUS_NOTOUCH;
         printf("already have wifi message! connect to ap SSID:%s password:%s\r\n",
                s_staconf.sta.ssid, s_staconf.sta.password);
         ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &s_staconf));

@@ -36,6 +36,10 @@ void Key_interrupt_callBack(void* arg)
                     {
                         re_touch();
                     }
+                    else 
+                    {
+                        printf("already in touch!\n");
+                    }
                 }
 
             }

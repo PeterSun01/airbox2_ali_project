@@ -29,6 +29,7 @@
 #include "ccs811.h"
 #include "PM25.h"
 #include "formaldehyde.h"
+#include "https.h"
 
 static const char *file_photo[3] = {"/spiffs/images/sun1.jpg", 
                                     "/spiffs/images/sun2.jpg", 
@@ -381,6 +382,7 @@ void app_main(void)
   xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT , false, true, portMAX_DELAY); 
   initialise_mqtt();
   sntp_usr_init();
+  weather_init();
   //xTaskCreate(&Time_Task, "Time_Task", 8192, NULL, 10, NULL);
   
 
