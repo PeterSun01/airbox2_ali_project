@@ -14,6 +14,8 @@
         "json_parse.h": "c",
         "tft_ctl.h": "c",
         "rtcusr.h": "c",
-        "queue.h": "c"
+        "queue.h": "c",
+        "https.h": "c",
+        "esp_tls.h": "c"
     }
 }

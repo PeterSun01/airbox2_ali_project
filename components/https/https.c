@@ -40,6 +40,7 @@
 #include "esp_tls.h"
 
 #include "https.h"
+#include "Json_parse.h"
 #include "Smartconfig.h"
 
 
@@ -67,21 +68,22 @@ static const char *REQUEST = "GET " WEB_URL " HTTP/1.0\r\n"
 */
 extern const uint8_t server_root_cert_pem_start[] asm("_binary_server_root_cert_pem_start");
 extern const uint8_t server_root_cert_pem_end[]   asm("_binary_server_root_cert_pem_end");
+
+static char buf[2048];
+static int ret, len;
+
+extern const int CONNECTED_BIT;
     
 
 
 static void https_get_task(void *pvParameters)
 {
-    char buf[512];
-    int ret, len;
-
-    while(1) {
-        /* Wait for the callback to set the CONNECTED_BIT in the
-           event group.
-        */
-        xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT , false, true, portMAX_DELAY); 
-        ESP_LOGI(TAG, "Connected to AP");
-        esp_tls_cfg_t cfg = {
+    while(1) 
+    {
+        xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT , false, true, portMAX_DELAY);  
+        ESP_LOGE(TAG, "Connected to Weather");
+        esp_tls_cfg_t cfg = 
+        {
             .cacert_pem_buf  = server_root_cert_pem_start,
             .cacert_pem_bytes = server_root_cert_pem_end - server_root_cert_pem_start,
         };
@@ -118,10 +120,15 @@ static void https_get_task(void *pvParameters)
             ret = esp_tls_conn_read(tls, (char *)buf, len);
             
             if(ret == MBEDTLS_ERR_SSL_WANT_WRITE  || ret == MBEDTLS_ERR_SSL_WANT_READ)
-                continue;
+            {
+                //continue;
+                ESP_LOGE(TAG, "esp_tls_conn_read1  returned -0x%x", -ret);
+                break;
+            }
+                
             
             if(ret < 0)
-           {
+            {
                 ESP_LOGE(TAG, "esp_tls_conn_read  returned -0x%x", -ret);
                 break;
             }
@@ -133,14 +140,20 @@ static void https_get_task(void *pvParameters)
             }
 
             len = ret;
-            ESP_LOGD(TAG, "%d bytes read", len);
+            ESP_LOGI(TAG, "%d bytes read", len);
             /* Print response directly to stdout as it is read */
-            
-            for(int i = 0; i < len; i++) 
+
+            parse_https_respond(strchr(buf, '{'));
+
+            printf("weather=%s\n",buf);
+
+            /*for(int i = 0; i < len; i++) 
             {
                 putchar(buf[i]);
             }
-        } while(1);
+            putchar('\n');*/
+        } 
+        while(1);
 
     exit:
         esp_tls_conn_delete(tls);    
@@ -149,7 +162,8 @@ static void https_get_task(void *pvParameters)
         static int request_count;
         ESP_LOGI(TAG, "Completed %d requests", ++request_count);
 
-        for(int countdown = 10; countdown >= 0; countdown--) {
+        for(int countdown = 10; countdown >= 0; countdown--) 
+        {
             ESP_LOGI(TAG, "%d...", countdown);
             vTaskDelay(1000 / portTICK_PERIOD_MS);
         }

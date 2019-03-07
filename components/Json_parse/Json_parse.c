@@ -192,5 +192,120 @@ void create_mqtt_json(creat_json *pCreat_json)
     
 }
 
+char Weather_today[512]="\0";//今日天气json
+char Weather_tomorrow[512]="\0";//明日天气json
+
+esp_err_t parse_https_respond(char *https_json_data)
+{
+    char * lookup1=NULL;
+    char * lookup2=NULL;
+    int today_json_len,tomorrow_json_len;
+
+    cJSON *json_data_parse = NULL;
+    cJSON *json_data_parse_Today_Cond_d = NULL;
+    cJSON *json_data_parse_Today_Cond_n = NULL;
+    cJSON *json_data_parse_Today_Date = NULL;
+    cJSON *json_data_parse_Today_Temp_max = NULL;
+    cJSON *json_data_parse_Today_Temp_min = NULL;
+
+    cJSON *json_data_parse_Tomorrow_Cond_d = NULL;
+    cJSON *json_data_parse_Tomorrow_Cond_n = NULL;
+    cJSON *json_data_parse_Tomorrow_Date = NULL;
+    cJSON *json_data_parse_Tomorrow_Temp_max = NULL;
+    cJSON *json_data_parse_Tomorrow_Temp_min = NULL;
+
+
+
+    if(https_json_data==NULL) //发送的不是json数据包
+    {
+        printf("null\n");
+        return 0;
+    }
+    else
+    {
+        lookup1=strstr(https_json_data,"\"daily_forecast\"");//查找第一个date为当前日期
+        if(lookup1!=NULL)
+        {
+            lookup2=strchr(lookup1,'}');
+            today_json_len=lookup2-lookup1-17;
+
+            bzero(Weather_today,sizeof(Weather_today));
+            strncpy(Weather_today,lookup1+18,today_json_len);
+            //Weather_today[today_json_len+1]='\0';
+            printf("Weather_today=\n%s\n",Weather_today);
+
+
+            json_data_parse = cJSON_Parse(Weather_today);
+            if (json_data_parse == NULL) //如果数据包不为JSON则退出
+            {
+
+                printf("Json Formatting error\n");
+                cJSON_Delete(json_data_parse);
+                return 0;
+            }
+
+            json_data_parse_Today_Cond_d = cJSON_GetObjectItem(json_data_parse, "cond_code_d"); 
+            printf("today cond_code_d= %s\n", json_data_parse_Today_Cond_d->valuestring);
+
+            json_data_parse_Today_Cond_n = cJSON_GetObjectItem(json_data_parse, "cond_code_n"); 
+            printf("today cond_code_n= %s\n", json_data_parse_Today_Cond_n->valuestring);  
+
+            json_data_parse_Today_Date = cJSON_GetObjectItem(json_data_parse, "date"); 
+            printf("today date= %s\n", json_data_parse_Today_Date->valuestring);   
+
+            json_data_parse_Today_Temp_max = cJSON_GetObjectItem(json_data_parse, "tmp_max"); 
+            printf("today tmp_max= %s\n", json_data_parse_Today_Temp_max->valuestring);  
+
+            json_data_parse_Today_Temp_min = cJSON_GetObjectItem(json_data_parse, "tmp_min"); 
+            printf("today tmp_min= %s\n", json_data_parse_Today_Temp_min->valuestring); 
+            
+            cJSON_Delete(json_data_parse);      
+
+        }
+
+        lookup1=strchr(lookup2,'{');
+        if(lookup1!=NULL)
+        {
+            lookup2=strchr(lookup1,'}');
+            tomorrow_json_len=lookup2-lookup1+1;
+            bzero(Weather_tomorrow,sizeof(Weather_tomorrow));
+            strncpy(Weather_tomorrow,lookup1,tomorrow_json_len);
+            printf("Weather_tomorrow=\n%s\n",Weather_tomorrow);
+
+            json_data_parse = cJSON_Parse(Weather_tomorrow);
+            if (json_data_parse == NULL) //如果数据包不为JSON则退出
+            {
+
+                printf("Json Formatting error\n");
+                cJSON_Delete(json_data_parse);
+                return 0;
+            }
+
+            json_data_parse_Tomorrow_Cond_d = cJSON_GetObjectItem(json_data_parse, "cond_code_d"); 
+            printf("Tomorrow cond_code_d= %s\n", json_data_parse_Tomorrow_Cond_d->valuestring);
+
+            json_data_parse_Tomorrow_Cond_n = cJSON_GetObjectItem(json_data_parse, "cond_code_n"); 
+            printf("Tomorrow cond_code_n= %s\n", json_data_parse_Tomorrow_Cond_n->valuestring);  
+
+            json_data_parse_Tomorrow_Date = cJSON_GetObjectItem(json_data_parse, "date"); 
+            printf("Tomorrow date= %s\n", json_data_parse_Tomorrow_Date->valuestring);   
+
+            json_data_parse_Tomorrow_Temp_max = cJSON_GetObjectItem(json_data_parse, "tmp_max"); 
+            printf("Tomorrow tmp_max= %s\n", json_data_parse_Tomorrow_Temp_max->valuestring);  
+
+            json_data_parse_Tomorrow_Temp_min = cJSON_GetObjectItem(json_data_parse, "tmp_min"); 
+            printf("Tomorrow tmp_min= %s\n", json_data_parse_Tomorrow_Temp_min->valuestring); 
+            
+            cJSON_Delete(json_data_parse);   
+            
+        }
+
+
+    }
+
+    return 1;
+    
+}
+
 
 
